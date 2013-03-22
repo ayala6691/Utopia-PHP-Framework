@@ -15,7 +15,7 @@ namespace Utopia;
 
 class Response {
 	
-	const _CONTENT_TYPE_TEXT 		= 'Content-Type: text/html; charset=UTF-8';
+	const _CONTENT_TYPE_HTML 		= 'Content-Type: text/html; charset=UTF-8';
 	const _CONTENT_TYPE_JSON 		= 'Content-Type: application/json; charset=UTF-8';
 	const _CONTENT_TYPE_XML	 		= 'Content-Type: text/xml; charset=UTF-8';
 	const _CONTENT_TYPE_JAVASCRIPT	= 'Content-Type: text/javascript; charset=UTF-8';
@@ -71,7 +71,7 @@ class Response {
 	/**
 	 * @var string
 	 */
-	private $contentType = self::_CONTENT_TYPE_TEXT;
+	private $contentType = self::_CONTENT_TYPE_HTML;
 	
 	/**
 	 * @var array
