@@ -107,25 +107,4 @@ class View {
 	public function escape($str) {
 		return htmlentities($str, ENT_QUOTES, 'UTF-8');
 	}
-	
-	/**
-	 * @param string $filename
-	 * @param int $type
-	 */
-	public function getMediaHost($filename, $type = 0) {
-		if('' == $filename) {
-			return '//' . $_SERVER['HTTP_HOST'] . '/images/404.gif';
-		}
-		
-		return '//media.' . $_SERVER['HTTP_HOST'] . '/' . $type . '-' . $filename;
-	}
-	
-	/**
-	 * @param string $controller
-	 * @param string $action
-	 * @param mixed $data
-	 */
-	public function getAction($controller = 'default', $action = 'index', $data = null){
-		return $this->getApp()->mvc->getAction(null, $controller, $action, $data);
-	}
 }
