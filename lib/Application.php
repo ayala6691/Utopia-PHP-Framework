@@ -5,7 +5,7 @@
  * @package Framework
  * @subpackage Core
  * 
- * @link http://code.google.com/p/utopia-php-framework/
+ * @link https://github.com/eldadfux/Utopia-PHP-Framework
  * @author Eldad Fux <eldad@fuxie.co.il>
  * @version 1.0 RC4
  * @license The MIT License (MIT) <http://www.opensource.org/licenses/mit-license.php>
@@ -76,8 +76,8 @@ class Application {
 		$current = basename(realpath('../'));
 		
 		$this->loader
-			->addEnviorment('Utopia', 'framework') // Framework enviorment
-			->addEnviorment(ucfirst($current), $current); // Current project enviorment
+			->addNamespace('Utopia', '../../framework/lib') // Framework enviorment
+			->addNamespace(ucfirst($current), '../../'. $current . '/app/models'); // Current project enviorment
 		
 		/**
 		 * Set Core Models
@@ -203,8 +203,8 @@ class Application {
 	 * @param string $path
 	 * @return Application
 	 */
-	public function addEnviorment($namespace, $path) {
-		$this->loader->addEnviorment($namespace, $path);
+	public function addNamespace($namespace, $path) {
+		$this->loader->addNamespace($namespace, $path);
 		return $this;
 	}
 }

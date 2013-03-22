@@ -5,7 +5,7 @@
  * @package Framework
  * @subpackage Core
  * 
- * @link http://code.google.com/p/utopia-php-framework/
+ * @link https://github.com/eldadfux/Utopia-PHP-Framework
  * @author Eldad Fux <eldad@fuxie.co.il>
  * @version 1.0 RC4
  * @license The MIT License (MIT) <http://www.opensource.org/licenses/mit-license.php>

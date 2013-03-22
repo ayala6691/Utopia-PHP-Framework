@@ -5,7 +5,7 @@
  * @package Framework
  * @subpackage Core
  * 
- * @link http://code.google.com/p/utopia-php-framework/
+ * @link https://github.com/eldadfux/Utopia-PHP-Framework
  * @author Eldad Fux <eldad@fuxie.co.il>
  * @version 1.0 RC4
  * @license The MIT License (MIT) <http://www.opensource.org/licenses/mit-license.php>
@@ -95,7 +95,7 @@ class Mvc {
 		$view->setPath('../app/views/' . strtolower($cname . '/' . $aname) . '.phtml')->setParam('vars', $vars);
 		
 		// Create controller
-		$cname = $cname . 'Controller';
+		$cname = ucfirst($cname) . 'Controller';
 
 		if (!array_key_exists($cname, $this->controllers)){
 			$path = '../app/controllers/' . $cname . '.php';

@@ -5,7 +5,7 @@
  * @package Framework
  * @subpackage Core
  * 
- * @link http://code.google.com/p/utopia-php-framework/
+ * @link https://github.com/eldadfux/Utopia-PHP-Framework
  * @author Eldad Fux <eldad@fuxie.co.il>
  * @version 1.0 RC4
  * @license The MIT License (MIT) <http://www.opensource.org/licenses/mit-license.php>
@@ -24,7 +24,7 @@ class Loader {
 	/**
 	 * @var array
 	 */
-	private $enviorments = array();
+	private $namespaces = array();
 	
 	public function __construct() {
 		spl_autoload_register(array($this, 'loader'));		
@@ -41,13 +41,11 @@ class Loader {
 		$replace	= array('', DIRECTORY_SEPARATOR);
 		$className	= str_replace($search, $replace, $className);
 		
-		if (!array_key_exists($namespace, $this->enviorments)) {
+		if (!array_key_exists($namespace, $this->namespaces)) {
 			throw new \Exception('"' . $namespace . '" enviorment doesn\'t exists or is not registered');
 		}
 		
-		$path = realpath('..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $this->enviorments[$namespace] . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . $className . '.php';
-
-		require $path;
+		require_once $this->namespaces[$namespace] . DIRECTORY_SEPARATOR . $className . '.php';
 	}
 	
 	/**
@@ -55,8 +53,8 @@ class Loader {
 	 * @param integer $weight
 	 * @return Loader
 	 */
-	public function addEnviorment($namespace, $path) {
-		$this->enviorments[$namespace] = $path;
+	public function addNamespace($namespace, $path) {
+		$this->namespaces[$namespace] = $path;
 		return $this;
 	}
 }
