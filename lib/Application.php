@@ -73,12 +73,6 @@ class Application {
 		/* Load application settings */
 		$this->loader = new Loader();
 		
-		$current = basename(realpath('../'));
-		
-		$this->loader
-			->addNamespace('Utopia', '../../framework/lib') // Framework enviorment
-			->addNamespace(ucfirst($current), '../../'. $current . '/app/models'); // Current project enviorment
-		
 		/**
 		 * Set Core Models
 		 */
