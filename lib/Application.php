@@ -73,6 +73,10 @@ class Application {
 		/* Load application settings */
 		$this->loader = new Loader();
 		
+		// Set up framework dependency
+		$this
+			->addDependency('Utopia', __DIR__);
+		
 		/**
 		 * Set Core Models
 		 */
