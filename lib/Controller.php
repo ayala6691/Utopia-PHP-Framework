@@ -68,25 +68,6 @@ abstract class Controller {
 	}
 	
 	/**
-	 * @param string $key
-	 * @param string $value
-	 * @return Controller
-	 */
-	protected function setParam($key, $value) {
-		$this->getView()->setParam($key, $value);
-		return $this;
-	}
-	
-	/**
-	 * @param string $key
-	 * @param mixed $default (optional)
-	 * @return mixed
-	 */
-	protected function getParam($key, $default = null) {
-		return $this->getView()->getParam($key, $default);
-	}
-	
-	/**
 	 * @param array $data
 	 */
 	protected function json(array $data) {
@@ -105,6 +86,16 @@ abstract class Controller {
 		$this->getLayout()
 			->setRendered()
 			->setParam(Mvc::_DEFAULT_ZONE, 'parent.' . $callback . '(' . json_encode($data) . ');'); /* Append json string to output tag */
+	}
+	
+	/**
+	 * @param string $callback
+	 * @param array $data
+	 */
+	protected function iframe($callback, array $data) {
+		$this->getLayout()
+			->setRendered()
+			->setParam(Mvc::_DEFAULT_ZONE, '<script type="text/javascript">window.parent.' . $callback . '(' . json_encode($data) . ');</script>'); /* Append json string to output tag */
 	}
 
 	/**
@@ -156,15 +147,5 @@ abstract class Controller {
 				$child->addAttribute('key', $attr);
 			}
 		}
-	}
-	
-	/**
-	 * @param string $callback
-	 * @param array $data
-	 */
-	protected function iframe($callback, array $data) {
-		$this->getLayout()
-			->setRendered()
-			->setParam(Mvc::_DEFAULT_ZONE, '<script type="text/javascript">window.parent.' . $callback . '(' . json_encode($data) . ');</script>'); /* Append json string to output tag */
 	}
 }
