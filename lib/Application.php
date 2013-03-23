@@ -70,7 +70,7 @@ class Application {
 	 */
 	private function __construct() {
 		
-		/* Load application settings */
+		// Initialize autoloader
 		$this->loader = new Loader();
 		
 		// Set up framework dependency
