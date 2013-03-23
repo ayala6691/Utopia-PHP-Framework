@@ -13,6 +13,8 @@
 
 namespace Utopia;
 
+use Exception;
+
 abstract class Controller {
 	use Bridge;
 	
@@ -29,7 +31,7 @@ abstract class Controller {
 	 * @param \Exception $e
 	 * @throws \Exception
 	 */
-	public function errorAction(\Exception $e) {
+	public function errorAction(Exception $e) {
 		throw $e;
 	}
 	
