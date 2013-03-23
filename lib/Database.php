@@ -13,6 +13,8 @@
 
 namespace Utopia;
 
+use PDO;
+
 class Database {
 	
 	/**
@@ -37,11 +39,11 @@ class Database {
 	 * @throws \Exception
 	 * @return \PDO
 	 */
-	public static function connect(array $db) {
-		$key = md5(implode('-', $db));
+	public static function connect($host, $name, $uname, $password) {
+		$key = md5($host . '-' . $name . '-' . $uname . '-' . $password);
 
 		try {
-			self::$db[$key] = new \PDO('mysql:host=' . $db['host'] . ';dbname=' . $db['name'], $db['uname'], $db['pass'], array(\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'));
+			self::$db[$key] = new PDO('mysql:host=' . $host . ';dbname=' . $name, $uname, $password, array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'));
 			++self::$connections;
 		}
 		catch (\PDOException $e) {
