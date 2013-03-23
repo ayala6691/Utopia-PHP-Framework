@@ -197,8 +197,8 @@ class Application {
 	 * @param string $path
 	 * @return Application
 	 */
-	public function addNamespace($namespace, $path) {
-		$this->loader->addNamespace($namespace, $path);
+	public function addDependency($namespace, $path) {
+		$this->loader->addDependency($namespace, $path);
 		return $this;
 	}
 }

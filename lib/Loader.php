@@ -24,7 +24,7 @@ class Loader {
 	/**
 	 * @var array
 	 */
-	private $namespaces = array();
+	private $dependencies = array();
 	
 	public function __construct() {
 		spl_autoload_register(array($this, 'loader'));		
@@ -41,11 +41,11 @@ class Loader {
 		$replace	= array('', DIRECTORY_SEPARATOR);
 		$className	= str_replace($search, $replace, $className);
 		
-		if (!array_key_exists($namespace, $this->namespaces)) {
+		if (!array_key_exists($namespace, $this->dependencies)) {
 			throw new \Exception('"' . $namespace . '" enviorment doesn\'t exists or is not registered');
 		}
 		
-		require_once $this->namespaces[$namespace] . DIRECTORY_SEPARATOR . $className . '.php';
+		require_once $this->dependencies[$namespace] . DIRECTORY_SEPARATOR . $className . '.php';
 	}
 	
 	/**
@@ -53,8 +53,8 @@ class Loader {
 	 * @param integer $weight
 	 * @return Loader
 	 */
-	public function addNamespace($namespace, $path) {
-		$this->namespaces[$namespace] = $path;
+	public function addDependency($namespace, $path) {
+		$this->dependencies[$namespace] = $path;
 		return $this;
 	}
 }
