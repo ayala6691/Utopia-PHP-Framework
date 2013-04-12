@@ -133,7 +133,7 @@ class Request {
 			break;
 			
 			case self::_METHOD_POST:
-				return $this->generateInputs();
+				return $_POST;
 			break;
 			
 			default:
