@@ -13,8 +13,12 @@
 
 namespace Utopia;
 
+use Exception;
+
 class View {
 
+	use Bridge;
+	
 	/**
 	 * @var string
 	 */
@@ -89,7 +93,7 @@ class View {
 			include $this->path; //Include View
 		}
 		else {
-			//throw new \Exception($this->path . ' view template is not readable');
+			//throw new Exception($this->path . ' view template is not readable');
 		}
 		
 		$html = ob_get_contents();
@@ -106,5 +110,27 @@ class View {
 	 */
 	public function escape($str) {
 		return htmlentities($str, ENT_QUOTES, 'UTF-8');
+	}
+	
+	/**
+	 * @param string $action
+	 * @param string $controller
+	 * @param array $vars
+	 * @return string
+	 */
+	public function url($action, $controller, array $vars = array()) {
+		return $this->getRouter()->getUrl($action, $controller, $vars);
+	}
+	
+	/**
+	 * @param string $zone
+	 * @param string $controller
+	 * @param string $action
+	 * @param mixed $vars
+	 * @throws Exception
+	 * @return bool
+	 */
+	protected  function action($controller, $action, $vars = null) {
+		return $this->getApp()->getMvc()->getAction(null, $controller, $action, $vars);
 	}
 }
