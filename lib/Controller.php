@@ -27,6 +27,9 @@ abstract class Controller {
 		$this->getView()->setRendered();
 	}
 	
+	public function shutdownAction() {
+	}
+	
 	/**
 	 * @param \Exception $e
 	 * @throws \Exception

@@ -34,6 +34,11 @@ class Mvc {
 	private $init = false;
 
 	/**
+	 * @var bool
+	 */
+	private $shutdown = false;
+
+	/**
 	 * @param string | null $zone
 	 * @param string $controller
 	 * @param string $action
@@ -50,22 +55,29 @@ class Mvc {
 		
 		$this->getApp()->getRouter()->init();
 
-		if (!$this->init){ /* Get default controller initAction */
+		// Get default controller initAction
+		if (!$this->init) {
 			$this->init = true;
 			$this->getAction(self::_DEFAULT_ZONE, $this->getApp()->getRouter()->getController(), 'init');
 		}
 		
-		/* Get default action */
+		// Get default action
 		$this->getAction(self::_DEFAULT_ZONE, $this->getApp()->getRouter()->getController(), $this->getApp()->getRouter()->getAction(), $this->getApp()->getRouter()->getVars());
 
-		/* Parse layout template */
+		// Get default controller shutdownAction
+		if (!$this->shutdown) {
+			$this->shutdown = true;
+			$this->getAction(self::_DEFAULT_ZONE, $this->getApp()->getRouter()->getController(), 'shutdown');
+		}
+
+		// Parse layout template
 		if (!$this->getLayout()->isRendered()) {
 			foreach ($this->html as $key => $value) {
 				$this->getLayout()->setParam($key, $value);
 			}
 		}
 		
-		/* Send Response */
+		// Send Response
 		$this->getResponse()->send($this->getLayout()->render());
 	}
 	
