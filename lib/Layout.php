@@ -100,10 +100,10 @@ class Layout extends View {
 			throw new \Exception('Meta tag must have at least $name or $property');
 		}
 		
-		$name 		= (!empty($name)) ? 'name="' . $name . '" ' : '';
-		$property	= (!empty($property)) ? 'property="' . $property . '" ' : '';
+		$name 		= (!empty($name)) ? 'name="' . $this->escape($name) . '" ' : '';
+		$property	= (!empty($property)) ? 'property="' . $this->escape($property) . '" ' : '';
 		
-		$this->meta[$name . '_' . $property] = '<meta ' . $name . $property . 'content="' . $content . '" />' . "\n\t\t";
+		$this->meta[$name . '_' . $property] = '<meta ' . $name . $property . 'content="' . $this->escape($content) . '" />' . "\n\t\t";
 		
 		return $this;
 	}
