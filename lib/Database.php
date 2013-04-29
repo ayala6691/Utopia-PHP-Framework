@@ -14,6 +14,7 @@
 namespace Utopia;
 
 use PDO;
+use Exception;
 
 class Database {
 	
@@ -25,29 +26,29 @@ class Database {
 	/**
 	 * @var int
 	 */
-	private static $connections = 0;
+	static private $connections = 0;
 	
 	private function __construct() {}
 	
 	private function __clone() {}
 	
 	/**
-	 * Gets array with database login details and set a PDO object at Database::$db
-	 * Currently support one connection per application. 
-	 * 
-	 * @param array $db
-	 * @throws \Exception
-	 * @return \PDO
+	 * @param string $host
+	 * @param string $name
+	 * @param string $uname
+	 * @param string $password
+	 * @throws Exception
+	 * @return \Utopia\PDO
 	 */
-	public static function connect($host, $name, $uname, $password) {
+	static public function connect($host, $name, $uname, $password) {
 		$key = md5($host . '-' . $name . '-' . $uname . '-' . $password);
 
 		try {
 			self::$db[$key] = new PDO('mysql:host=' . $host . ';dbname=' . $name, $uname, $password, array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'));
 			++self::$connections;
 		}
-		catch (\PDOException $e) {
-			throw new \Exception($e->getMessage());
+		catch (Exception $e) {
+			throw $e;
 		}
 		
 		return self::$db[$key];
