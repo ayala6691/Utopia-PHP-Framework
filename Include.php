@@ -11,9 +11,20 @@
  * @license The MIT License (MIT) <http://www.opensource.org/licenses/mit-license.php>
  */
 
-// Version check
-if (0 > version_compare(PHP_VERSION, '5.4.0')) { // Check PHP version number
-	throw new Exception("Utopia Framework was designed and tested on PHP version 5.4.0 or later, please update your version\n");
+/**
+ * Version Check
+ * 
+ * PHP 5.4.0 features in use:
+ * 	- Traits
+ * 
+ * PHP 5.4.0 functions in use:
+ * 	- http_response_code
+ * 
+ */
+$phpVersion = '5.4.0';
+
+if (0 > version_compare(PHP_VERSION, $phpVersion)) { // Check PHP version number
+	throw new Exception("Utopia Framework was designed and tested on PHP version ' . $phpVersion . ' or later, please update your version\n");
 }
 
 require __DIR__ . '/lib/Application.php';
