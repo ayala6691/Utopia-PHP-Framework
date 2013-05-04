@@ -44,7 +44,8 @@ class Config {
 			
 			if (null !== $temp){
 				$value = $temp;
-			}else{
+			}
+			else {
 				return $default;
 			}
 		}

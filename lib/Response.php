@@ -174,6 +174,7 @@ class Response {
 	 * @param string $domain 	[optional]
 	 * @param bool $secure 		[optional]
 	 * @param bool $httponly 	[optional]
+	 * @return Response
 	 */
 	public function addCookie($name, $value = null, $expire = null, $path = null, $domain = null, $secure = null, $httponly = null) {
 		$this->cookies[] = array(

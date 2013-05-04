@@ -142,7 +142,7 @@ class Layout extends View {
 		}
 		
 		/* Set HTML head section */
-		$head = implode('', $this->meta);
+		$head  = implode('', $this->meta);
 		$head .= implode('', $this->links);
 		$head .= implode('', $this->scripts);
 		$head .= ($this->inlineScript) ? '<script>' . $this->inlineScript . '</script>' . "\n" : '';

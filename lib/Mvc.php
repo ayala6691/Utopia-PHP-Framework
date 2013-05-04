@@ -13,6 +13,8 @@
 
 namespace Utopia;
 
+use Exception;
+
 class Mvc {
 	use Bridge;
 
@@ -116,7 +118,7 @@ class Mvc {
 				require_once $path;	
 			}
 			else {
-				throw new \Exception('No ' . $cname . ' controller exists');
+				throw new Exception('No ' . $cname . ' controller exists');
 			}
 			
 			$this->controllers[$cname] = new $cname();
@@ -133,10 +135,10 @@ class Mvc {
 				$this->controllers[$cname]->$action();
 			}
 			else {
-				throw new \Exception('Unknown Action "' . $action . '"', 404);
+				throw new Exception('Unknown Action "' . $action . '"', 404);
 			}
 		}
-		catch (\Exception $e) { /* call error action instead */
+		catch (Exception $e) { /* call error action instead */
 			$this->controllers[$cname]->errorAction($e);
 		}
 		
