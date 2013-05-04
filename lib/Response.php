@@ -13,13 +13,58 @@
 
 namespace Utopia;
 
+use Exception;
+
 class Response {
 	
-	const _CONTENT_TYPE_HTML 		= 'Content-Type: text/html; charset=UTF-8';
-	const _CONTENT_TYPE_JSON 		= 'Content-Type: application/json; charset=UTF-8';
-	const _CONTENT_TYPE_XML	 		= 'Content-Type: text/xml; charset=UTF-8';
-	const _CONTENT_TYPE_JAVASCRIPT	= 'Content-Type: text/javascript; charset=UTF-8';
+	const _CONTENT_TYPE_HTML 		= 'text/html; charset=UTF-8';
+	const _CONTENT_TYPE_JSON 		= 'application/json; charset=UTF-8';
+	const _CONTENT_TYPE_XML	 		= 'text/xml; charset=UTF-8';
+	const _CONTENT_TYPE_JAVASCRIPT	= 'text/javascript; charset=UTF-8';
 
+	// HTTP status codes
+	const _STATUS_CODE_CONTINUE 						= 100;
+	const _STATUS_CODE_SWITCHING_PROTOCOLS 				= 101;
+	const _STATUS_CODE_OK 								= 200;
+	const _STATUS_CODE_CREATED 							= 201;
+	const _STATUS_CODE_ACCEPTED 						= 202;
+	const _STATUS_CODE_NON_AUTHORITATIVE_INFORMATION 	= 203;
+	const _STATUS_CODE_NO_CONTENT 						= 204;
+	const _STATUS_CODE_RESET_CONTENT 					= 205;
+	const _STATUS_CODE_PARTIAL_CONTENT 					= 206;
+	const _STATUS_CODE_MULTIPLE_CHOICES 				= 300;
+	const _STATUS_CODE_MOVED_PERMANENTLY 				= 301;
+	const _STATUS_CODE_FOUND							= 302;
+	const _STATUS_CODE_SEE_OTHER 						= 303;
+	const _STATUS_CODE_NOT_MODIFIED 					= 304;
+	const _STATUS_CODE_USE_PROXY 						= 305;
+	const _STATUS_CODE_UNUSED 							= 306;
+	const _STATUS_CODE_TEMPORARY_REDIRECT 				= 307;
+	const _STATUS_CODE_BAD_REQUEST 						= 400;
+	const _STATUS_CODE_UNAUTHORIZED 					= 401;
+	const _STATUS_CODE_PAYMENT_REQUIRED 				= 402;
+	const _STATUS_CODE_FORBIDDEN 						= 403;
+	const _STATUS_CODE_NOT_FOUND 						= 404;
+	const _STATUS_CODE_METHOD_NOT_ALLOWED 				= 405;
+	const _STATUS_CODE_NOT_ACCEPTABLE 					= 406;
+	const _STATUS_CODE_PROXY_AUTHENTICATION_REQUIRED 	= 407;
+	const _STATUS_CODE_REQUEST_TIMEOUT 					= 408;
+	const _STATUS_CODE_CONFLICT 						= 409;
+	const _STATUS_CODE_GONE 							= 410;
+	const _STATUS_CODE_LENGTH_REQUIRED 					= 411;
+	const _STATUS_CODE_PRECONDITION_FAILED 				= 412;
+	const _STATUS_CODE_REQUEST_ENTITY_TOO_LARGE 		= 413;
+	const _STATUS_CODE_REQUEST_URI_TOO_LONG 			= 414;
+	const _STATUS_CODE_UNSUPPORTED_MEDIA_TYPE 			= 415;
+	const _STATUS_CODE_REQUESTED_RANGE_NOT_SATISFIABLE 	= 416;
+	const _STATUS_CODE_EXPECTATION_FAILED 				= 417;
+	const _STATUS_CODE_INTERNAL_SERVER_ERROR 			= 500;
+	const _STATUS_CODE_NOT_IMPLEMENTED 					= 501;
+	const _STATUS_CODE_BAD_GATEWAY 						= 502;
+	const _STATUS_CODE_SERVICE_UNAVAILABLE 				= 503;
+	const _STATUS_CODE_GATEWAY_TIMEOUT 					= 504;
+	const _STATUS_CODE_HTTP_VERSION_NOT_SUPPORTED 		= 505;
+		
 	/**
 	 * @var array
 	 */
@@ -69,6 +114,11 @@ class Response {
 	);
 	
 	/**
+	 * @var int
+	 */
+	private $statusCode = self::_STATUS_CODE_ACCEPTED;
+	
+	/**
 	 * @var string
 	 */
 	private $contentType = self::_CONTENT_TYPE_HTML;
@@ -98,22 +148,21 @@ class Response {
 	 */
 	public function setStatusCode($code = 200) {
 		if (!array_key_exists($code, $this->statusCodes)) {
-			$code = 0;
+			throw new Exception('Unknown HTTP status code');
 		}
 		
-		$header = 'HTTP/1.1 ' . $code . ' ' . $this->statusCodes[$code];
-		$this->addHeader($header);
+		$this->statusCode = $code;
 		
 		return $this;
 	}
 	
 	/**
+	 * @param string $key
 	 * @param string $value
-	 * @param bool $exit [optional]
 	 * @return Response
 	 */
-	public function addHeader($value, $exit = false){
-		$this->headers[] = array('value' => $value, 'exit' => $exit);
+	public function addHeader($key, $value){
+		$this->headers[$key] = $value;
 		return $this;
 	}
 	
@@ -141,12 +190,16 @@ class Response {
 	}
 	
 	/**
-	 * Output response headers and body
+	 * Output response (headers and body)
 	 * 
 	 * @param string $body
 	 */
 	public function send($body = '') {
-		$this->appendCookies()->appendHeaders();
+		$this
+			->appendCookies()
+			->appendHeaders()
+		;
+		
 		echo $body;
 	}
 	
@@ -155,14 +208,17 @@ class Response {
 	 */
 	private function appendHeaders() {
 		
-		header($this->contentType);
+		// Send status code header
+		http_response_code($this->statusCode);
+		
+		// Send conetnt type header
+		$this
+			->addHeader('Content-Type', $this->contentType)
+		;
 
-		foreach ($this->headers as $header){
-			header($header['value']);
-			
-			if ($header['exit']){
-				exit();
-			}
+		// Set application headers
+		foreach ($this->headers as $key => $value){
+			header($key . ': ' . $value);
 		}
 		
 		return $this;
