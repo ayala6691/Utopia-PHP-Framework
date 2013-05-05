@@ -13,6 +13,8 @@
 
 namespace Utopia;
 
+use Exception;
+
 /**
  * Utopia Loader implements the technical interoperability
  * standards for PHP 5.4 namespaces and class names as defined by the PHP Framework Interoperability Group (PHP-FIG) autoloading standard [PSR-0].
@@ -32,7 +34,7 @@ class Loader {
 
 	/**
 	 * @param string $className
-	 * @throws \Exception
+	 * @throws Exception
 	 */
 	public function loader($className) {
 		$namespace = substr($className, 0, strpos($className, '\\')); // Get the enviorment key so we could assign it to project path
@@ -42,7 +44,7 @@ class Loader {
 		$className	= str_replace($search, $replace, $className);
 		
 		if (!array_key_exists($namespace, $this->dependencies)) {
-			throw new \Exception('"' . $namespace . '" enviorment doesn\'t exists or is not registered');
+			throw new Exception('"' . $namespace . '" enviorment doesn\'t exists or is not registered');
 		}
 		
 		require_once $this->dependencies[$namespace] . DIRECTORY_SEPARATOR . $className . '.php';

@@ -116,7 +116,7 @@ class Response {
 	/**
 	 * @var int
 	 */
-	private $statusCode = self::_STATUS_CODE_ACCEPTED;
+	private $statusCode = self::_STATUS_CODE_OK;
 	
 	/**
 	 * @var string

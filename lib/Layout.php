@@ -13,6 +13,8 @@
 
 namespace Utopia;
 
+use Exception;
+
 class Layout extends View {
 
 	/**
@@ -92,12 +94,12 @@ class Layout extends View {
 	 * @param string $content
 	 * @param string $name
 	 * @param string $property
-	 * @throws \Exception
+	 * @throws Exception
 	 * @return Layout
 	 */
 	public function addMeta($content, $name = '', $property = '') {
 		if (empty($name) && empty($property)) {
-			throw new \Exception('Meta tag must have at least $name or $property');
+			throw new Exception('Meta tag must have at least $name or $property');
 		}
 		
 		$name 		= (!empty($name)) ? 'name="' . $this->escape($name) . '" ' : '';

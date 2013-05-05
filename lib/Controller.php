@@ -14,6 +14,8 @@
 namespace Utopia;
 
 use Exception;
+use ArrayObject;
+use SimpleXMLElement;
 
 abstract class Controller {
 	use Bridge;
@@ -31,8 +33,8 @@ abstract class Controller {
 	}
 	
 	/**
-	 * @param \Exception $e
-	 * @throws \Exception
+	 * @param Exception $e
+	 * @throws Exception
 	 */
 	public function errorAction(Exception $e) {
 		throw $e;
@@ -61,12 +63,12 @@ abstract class Controller {
 	 * @param string $controller
 	 * @param string $action
 	 * @param mixed $vars
-	 * @throws \Exception
+	 * @throws Exception
 	 * @return bool
 	 */
 	protected  function getAction($zone, $controller, $action, $vars = null) {
 		if (null == $zone) {
-			//throw new \Exception('Can\'t echo action directly from controller');
+			//throw new Exception('Can\'t echo action directly from controller');
 		}
 		
 		return $this->getApp()->getMvc()->getAction($zone, $controller, $action, $vars);
@@ -108,7 +110,7 @@ abstract class Controller {
 	 * @return mixed
 	 */
 	protected function xml(array $data) {
-		$xml	= new \SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><root />');
+		$xml	= new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><root />');
 		$this->arr2xml($data, $xml);
 		
 		$this->getResponse()->setContentType(Response::_CONTENT_TYPE_XML); /* Set Content Type */
@@ -121,7 +123,7 @@ abstract class Controller {
 	 * @param array $array
 	 * @param SimpleXMLElement $xml
 	 */
-	protected function arr2xml(array $array, \SimpleXMLElement $xml) {
+	protected function arr2xml(array $array, SimpleXMLElement $xml) {
 
 		foreach ($array as $key => $value) {
 			$attr = null;
@@ -135,7 +137,7 @@ abstract class Controller {
 				$child	= $xml->addChild($key);
 				$this->arr2xml($value, $child);
 			}
-			elseif ($value instanceof \ArrayObject) { // Handle ArrayObject's
+			elseif ($value instanceof ArrayObject) { // Handle ArrayObject's
 				$child	= $xml->addChild($key);
 				$this->arr2xml($value->getArrayCopy(), $child);
 			}
