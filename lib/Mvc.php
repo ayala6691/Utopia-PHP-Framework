@@ -16,139 +16,97 @@ namespace Utopia;
 use Exception;
 
 class Mvc {
+	
 	use Bridge;
-
-	const _DEFAULT_ZONE = 'body';
 	
 	/**
-	 * @var array
+	 * @var Controller
 	 */
-	private $html = array();
-
+	protected $controller = null;
+	
 	/**
-	 * @var array
-	 */
-	private	$controllers = array();
-
-	/**
-	 * @var bool
-	 */
-	private $init = false;
-
-	/**
-	 * @var bool
-	 */
-	private $shutdown = false;
-
-	/**
-	 * @param string | null $zone
-	 * @param string $controller
-	 * @param string $action
-	 * @param mixed $vars
-	 */
-	public function getAction($zone = null, $controller = 'default', $action = 'index', $vars = null){
-		return $this->dispatcher($zone, $controller, $action, $vars);
-	}
-
-	/**
-	 * @return string
+	 * Run's application lifecycle
+	 * 
+	 * 	1. Router Initialization
+	 * 	2. Dispatch initAction
+	 * 	3. Dispatch routed xAction
+	 * 	4. Dispatch shutdownAction
+	 * 	5. Send response
 	 */
 	public function run() {
+		// Initialize router
+		$this->getRouter()->init();
 		
-		$this->getApp()->getRouter()->init();
+		// Excute routed xAction
+		$body = $this->dispatcher($this->getRouter()->getController(), $this->getRouter()->getAction(), $this->getRouter()->getVars());
 
-		// Get default controller initAction
-		if (!$this->init) {
-			$this->init = true;
-			$this->getAction(self::_DEFAULT_ZONE, $this->getApp()->getRouter()->getController(), 'init');
-		}
-		
-		// Get default action
-		$this->getAction(self::_DEFAULT_ZONE, $this->getApp()->getRouter()->getController(), $this->getApp()->getRouter()->getAction(), $this->getApp()->getRouter()->getVars());
-
-		// Get default controller shutdownAction
-		if (!$this->shutdown) {
-			$this->shutdown = true;
-			$this->getAction(self::_DEFAULT_ZONE, $this->getApp()->getRouter()->getController(), 'shutdown');
-		}
-
-		// Parse layout template
-		if (!$this->getLayout()->isRendered()) {
-			foreach ($this->html as $key => $value) {
-				$this->getLayout()->setParam($key, $value);
-			}
-		}
-		
 		// Send Response
 		$this->getResponse()->send($this->getLayout()->render());
 	}
 	
 	/**
 	 * This is where MVC comes together
-	 * 
-	 * 	- Create view
-	 * 	- Create controller
-	 * 	- Attach view to the controller
+	 *
+	 * 	- Create View
+	 * 	- Create Controller
+	 * 	- Attach View to the Controller
 	 * 	- Process action
-	 * 	- Render view
+	 * 	- Render View
 	 * 
-	 * @param string 	$zone	Action zone tag in the application layout, apply null if no related tag needed
-	 * @param mixed 	$cname	Controller name
-	 * @param mixed 	$data	Action name
-	 * @param mixed 	$vars	multiple parameters as an object or array (optional)
+	 * @param string $controller
+	 * @param string $action
+	 * @param mixed $vars
+	 * @throws Exception
 	 * @return string
 	 */
-	private function dispatcher($zone, $cname, $aname, $vars = null){
+	private function dispatcher($controller, $action, $vars = null){
 		
-		if ((!isset($this->html[$zone])) && ($zone != null)) { /* Set key value if !isset */
-			$this->html[$zone] = '';
-		}
-
-		// Create View
+		// Set view template path
 		$view = new View();
-		$view->setPath('../app/views/' . strtolower($cname . '/' . $aname) . '.phtml')->setParam('vars', $vars);
 		
+		$view
+			->setPath('../app/views/' . strtolower($controller . '/' . $action) . '.phtml')
+			->setParam('vars', $vars);
+	
 		// Create controller
-		$cname = ucfirst($cname) . 'Controller';
+		$controller = ucfirst($controller) . 'Controller';
 
-		if (!array_key_exists($cname, $this->controllers)){
-			$path = '../app/controllers/' . $cname . '.php';
+		$path = '../app/controllers/' . $controller . '.php';
 			
-			if (is_readable($path)) {
-				require_once $path;	
-			}
-			else {
-				throw new Exception('No ' . $cname . ' controller exists');
-			}
-			
-			$this->controllers[$cname] = new $cname();
+		if (is_readable($path)) {
+			require_once $path;
 		}
-		
+		else {
+			throw new Exception($controller . ' controller doesn\'t exists');
+		}
+
+		$this->controller = new $controller();
+
 		// Attach view to controller
-		$this->controllers[$cname]->setView($view); //FIXME test this
-
+		$this->controller->setView($view);
+	
 		// Process action
-		$action = $aname . 'Action';
-		
+		$action = $action . 'Action';
+	
 		try {
-			if (method_exists($this->controllers[$cname], $action)) {
-				$this->controllers[$cname]->$action();
+			$this->controller->init();
+			
+			if (method_exists($this->controller, $action)) {
+				$this->controller->$action();
 			}
+			
 			else {
-				throw new Exception('Unknown Action "' . $action . '"', 404);
+				throw new Exception('Unknown Action "' . $action . '"');
 			}
+			
+			$this->controller->shutdown();
 		}
-		catch (Exception $e) { /* call error action instead */
-			$this->controllers[$cname]->errorAction($e);
+		catch (Exception $e) { // Call error action instead
+			$this->controller->errorAction($e);
 		}
 		
-		// Render view
-		$html = $view->render();
-		
-		if (null != $zone) {
-			$this->html[$zone] .= $html;
+		if (!$this->getLayout()->isRendered()) {
+			$this->getLayout()->setBody($view->render());
 		}
-
-		return $html;
 	}
 }

@@ -17,6 +17,9 @@ use Exception;
 
 class Layout extends View {
 
+	const LAYOUT_HEAD = 'head';
+	const LAYOUT_BODY = 'body';
+	
 	/**
 	 * @var array
 	 */
@@ -49,6 +52,13 @@ class Layout extends View {
 	
 	public function __construct() {
 		$this->addMeta('Utopia Framework v.1', 'generator');
+	}
+	
+	/**
+	 * @param string $body
+	 */
+	public function setBody($body) {
+		return $this->setParam(self::LAYOUT_BODY, $this->getParam(self::LAYOUT_BODY, '') . $body);
 	}
 	
 	/**
@@ -140,7 +150,7 @@ class Layout extends View {
 	 */
 	public function render() {
 		if ($this->rendered) { // Return only content if layout should not be rendered
-			return $this->getParam('body');
+			return $this->getParam(self::LAYOUT_BODY);
 		}
 		
 		/* Set HTML head section */
@@ -150,9 +160,8 @@ class Layout extends View {
 		$head .= ($this->inlineScript) ? '<script>' . $this->inlineScript . '</script>' . "\n" : '';
 		$head .= '<title>' . $this->title . '</title>' . "\n";
 		
-		$this->setParam('head', $head);
+		$this->setParam(self::LAYOUT_HEAD, $head);
 		
 		return parent::render();
 	}
-
 }

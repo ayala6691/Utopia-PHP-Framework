@@ -25,12 +25,9 @@ abstract class Controller {
 	 */
 	protected $view = null;
 	
-	public function initAction() {
-		$this->getView()->setRendered();
-	}
+	public function init() {}
 	
-	public function shutdownAction() {
-	}
+	public function shutdown() {}
 	
 	/**
 	 * @param Exception $e
@@ -59,29 +56,29 @@ abstract class Controller {
 	/* Controller Helpers -> this will be implemented as external files in feature version  */
 	
 	/**
-	 * @param string $zone
-	 * @param string $controller
-	 * @param string $action
-	 * @param mixed $vars
-	 * @throws Exception
-	 * @return bool
+	 * @param string $url
 	 */
-	protected  function getAction($zone, $controller, $action, $vars = null) {
-		if (null == $zone) {
-			//throw new Exception('Can\'t echo action directly from controller');
-		}
+	protected function redirect($url) {
+		$this->getLayout()->setRendered();
 		
-		return $this->getApp()->getMvc()->getAction($zone, $controller, $action, $vars);
+		$this->getResponse()
+			->addHeader('Location', $url)
+			->setStatusCode(Response::_STATUS_CODE_MOVED_PERMANENTLY)
+			->send();
+		;
+		
+		exit();
 	}
 	
 	/**
 	 * @param array $data
 	 */
 	protected function json(array $data) {
-		$this->getResponse()->setContentType(Response::_CONTENT_TYPE_JSON); /* Set Content Type */
+		$this->getResponse()->setContentType(Response::_CONTENT_TYPE_JSON);
 		$this->getLayout()
 			->setRendered()
-			->setParam(Mvc::_DEFAULT_ZONE, json_encode($data)); /* Append json string to output tag */
+			->setBody(json_encode($data))
+		;
 	}
 
 	/**
@@ -89,10 +86,10 @@ abstract class Controller {
 	 * @param array $data
 	 */
 	protected function jsonp($callback, array $data) {
-		$this->getResponse()->setContentType(Response::_CONTENT_TYPE_JAVASCRIPT); /* Set Content Type */
+		$this->getResponse()->setContentType(Response::_CONTENT_TYPE_JAVASCRIPT);
 		$this->getLayout()
 			->setRendered()
-			->setParam(Mvc::_DEFAULT_ZONE, 'parent.' . $callback . '(' . json_encode($data) . ');'); /* Append json string to output tag */
+			->setBody('parent.' . $callback . '(' . json_encode($data) . ');');
 	}
 	
 	/**
@@ -102,21 +99,20 @@ abstract class Controller {
 	protected function iframe($callback, array $data) {
 		$this->getLayout()
 			->setRendered()
-			->setParam(Mvc::_DEFAULT_ZONE, '<script type="text/javascript">window.parent.' . $callback . '(' . json_encode($data) . ');</script>'); /* Append json string to output tag */
+			->setBody('<script type="text/javascript">window.parent.' . $callback . '(' . json_encode($data) . ');</script>');
 	}
 
 	/**
-	 * @param object $data
-	 * @return mixed
+	 * @param array $data
 	 */
 	protected function xml(array $data) {
-		$xml	= new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><root />');
+		$xml = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><root />');
 		$this->arr2xml($data, $xml);
 		
-		$this->getResponse()->setContentType(Response::_CONTENT_TYPE_XML); /* Set Content Type */
+		$this->getResponse()->setContentType(Response::_CONTENT_TYPE_XML);
 		$this->getLayout()
 		->setRendered()
-			->setParam(Mvc::_DEFAULT_ZONE, $xml->asXML()); /* Append XML string to output tag */
+			->setBody($xml->asXML());
 	}
 
 	/**

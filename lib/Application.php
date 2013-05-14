@@ -23,27 +23,27 @@ class Application {
 	/**
 	 * @var Layout
 	 */
-	private $layout;
+	private $layout = null;
 	
 	/**
 	 * @var Loader
 	 */
-	private $loader;
+	private $loader = null;
 	
 	/**
 	 * @var Mvc
 	 */
-	private $mvc;
+	private $mvc = null;
 	
 	/**
 	 * @var Request
 	 */
-	private $request;
+	private $request = null;
 	
 	/**
 	 * @var response
 	 */
-	private $response;
+	private $response = null;
 	
 	/**
 	 * @var Router
