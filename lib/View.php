@@ -93,7 +93,7 @@ class View {
 			include $this->path; //Include View
 		}
 		else {
-			throw new Exception($this->path . ' view template is not readable');
+			throw new Exception('"' . $this->path . '" view template is not readable');
 		}
 		
 		$html = ob_get_contents();
