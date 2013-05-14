@@ -58,7 +58,7 @@ class Layout extends View {
 	 * @param string $body
 	 */
 	public function setBody($body) {
-		return $this->setParam(self::LAYOUT_BODY, $this->getParam(self::LAYOUT_BODY, '') . $body);
+		return $this->setParam(self::LAYOUT_BODY, $body);
 	}
 	
 	/**
