@@ -143,6 +143,20 @@ class Layout extends View {
 		
 		return $this;
 	}
+
+	/**
+	 * @return string
+	 */
+	public function getHead() {
+		return $this->getParam(self::LAYOUT_HEAD);
+	}
+	
+	/**
+	 * @return string
+	 */
+	public function getBody() {
+		return $this->getParam(self::LAYOUT_BODY);
+	}
 	
 	/**
 	 * (non-PHPdoc)
