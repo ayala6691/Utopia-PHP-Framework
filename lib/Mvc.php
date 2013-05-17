@@ -20,11 +20,6 @@ class Mvc {
 	use Bridge;
 	
 	/**
-	 * @var Controller
-	 */
-	protected $controller = null;
-	
-	/**
 	 * Run's application lifecycle
 	 * 
 	 * 	1. Router Initialization
@@ -80,29 +75,29 @@ class Mvc {
 			throw new Exception($controller . ' controller doesn\'t exists');
 		}
 
-		$this->controller = new $controller();
+		$controller = new $controller();
 
 		// Attach view to controller
-		$this->controller->setView($view);
+		$controller->setView($view);
 	
 		// Process action
 		$action = $action . 'Action';
 	
 		try {
-			$this->controller->init();
+			$controller->init();
 			
-			if (method_exists($this->controller, $action)) {
-				$this->controller->$action();
+			if (method_exists($controller, $action)) {
+				$controller->$action();
 			}
 			
 			else {
 				throw new Exception('Unknown Action "' . $action . '"');
 			}
 			
-			$this->controller->shutdown();
+			$controller->shutdown();
 		}
 		catch (Exception $e) { // Call error action instead
-			$this->controller->errorAction($e);
+			$controller->errorAction($e);
 		}
 		
 		if (!$this->getLayout()->isRendered()) {
