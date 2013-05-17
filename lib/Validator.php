@@ -173,25 +173,3 @@ class Validator {
 		return array_merge($options, $defaults);
 	}
 }
-
-/*
-
-Usage Example:
-
-$data = array(
-	'name' 		=> 'eldad fux is my name<<""&&',
-	'age'		=> 23,
-	'email'		=> 'ald10@012.net.il',
-	'idCard'	=> 200369998,
-	'license'	=> null,
-);
-
-$filter = new Validator($data);
-
-$filter
-	->addRule('name', Validator::_FILTER_STRING, array('html' => false))
-	->addRule('license', Validator::_FILTER_REQUIRED)
-	;
-
-var_dump($filter->getData());
-*/
