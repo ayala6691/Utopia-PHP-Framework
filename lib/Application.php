@@ -13,6 +13,14 @@
 
 namespace Utopia;
 
+/**
+ * Application Lifecycle:
+ * 
+ * 	- Router init
+ * 	- Dispatch loop
+ * 		- 
+ *
+ */
 class Application {
 	
 	/**
@@ -29,11 +37,6 @@ class Application {
 	 * @var Loader
 	 */
 	private $loader = null;
-	
-	/**
-	 * @var Mvc
-	 */
-	private $mvc = null;
 	
 	/**
 	 * @var Request
@@ -82,7 +85,6 @@ class Application {
 		 */
 		$this
 			->setLayout(new Layout())
-			->setMvc(new Mvc())
 			->setRequest(new Request())
 			->setResponse(new Response())
 		;
@@ -102,8 +104,22 @@ class Application {
 		return self::$instance;
 	}
 	
+	/**
+	 * Run's application lifecycle
+	 *
+	 * 	1. Router Initialization
+	 * 	3. Dispatch routed xAction
+	 * 	5. Send response
+	 */
 	public function run() {
-		return $this->mvc->run();
+		// Initialize router
+		$this->getRouter()->init();
+	
+		// Excute routed xAction
+		$body = $this->dispatcher($this->getRouter()->getController(), $this->getRouter()->getAction(), $this->getRouter()->getVars());
+	
+		// Send Response
+		$this->getResponse()->send($this->getLayout()->render());
 	}
 	
 	/**
@@ -111,14 +127,6 @@ class Application {
 	 */
 	public function setLayout(Layout $layout) {
 		$this->layout = $layout;
-		return $this;
-	}
-	
-	/**
-	 * @param Mvc $mvc
-	 */
-	public function setMvc(Mvc $mvc) {
-		$this->mvc = $mvc;
 		return $this;
 	}
 	
@@ -151,13 +159,6 @@ class Application {
 	 */
 	public function getLayout() {
 		return $this->layout;
-	}
-	
-	/**
-	 * @return Mvc
-	 */
-	public function getMvc() {
-		return $this->mvc;
 	}
 	
 	/**
@@ -204,6 +205,73 @@ class Application {
 	public function addDependency($namespace, $path) {
 		$this->loader->addDependency($namespace, $path);
 		return $this;
+	}
+
+	/**
+	 * This is where MVC comes all together
+	 *
+	 * 	- Create View
+	 * 	- Create Controller
+	 * 	- Attach View to the Controller
+	 * 	- Process action
+	 * 	- Render View
+	 * 	- Attach output to the Layout
+	 *
+	 * @param string $controller
+	 * @param string $action
+	 * @param mixed $vars
+	 * @throws Exception
+	 * @return string
+	 */
+	private function dispatcher($controller, $action, $vars = null){
+	
+		// Set view template path
+		$view = new View();
+	
+		$view
+		->setPath('../app/views/' . strtolower($controller . '/' . $action) . '.phtml')
+		->setParam('vars', $vars);
+	
+		// Create controller
+		$controller = ucfirst($controller) . 'Controller';
+	
+		$path = '../app/controllers/' . $controller . '.php';
+			
+		if (is_readable($path)) {
+			require_once $path;
+		}
+		else {
+			throw new Exception($controller . ' controller doesn\'t exists');
+		}
+	
+		$controller = new $controller();
+	
+		// Attach view to controller
+		$controller->setView($view);
+	
+		// Process action
+		$action = $action . 'Action';
+	
+		try {
+			$controller->init();
+	
+			if (method_exists($controller, $action)) {
+				$controller->$action();
+			}
+	
+			else {
+				throw new Exception('Unknown Action "' . $action . '"');
+			}
+	
+			$controller->shutdown();
+		}
+		catch (Exception $e) { // Call error action instead
+			$controller->errorAction($e);
+		}
+	
+		if (!$this->getLayout()->isRendered()) {
+			$this->getLayout()->setBody($view->render());
+		}
 	}
 }
 
