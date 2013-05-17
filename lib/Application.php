@@ -16,10 +16,15 @@ namespace Utopia;
 /**
  * Application Lifecycle:
  * 
- * 	- Router init
- * 	- Dispatch loop
- * 		- 
- *
+ *	1. Router Initialization
+ * 	2. Dispatch routed xAction
+ * 		- Create View
+ * 		- Create Controller
+ * 		- Attach View to the Controller
+ * 		- Process action
+ * 		- Render View
+ * 		- Attach output to the Layout
+ * 	3. Send response
  */
 class Application {
 	
@@ -108,8 +113,8 @@ class Application {
 	 * Run's application lifecycle
 	 *
 	 * 	1. Router Initialization
-	 * 	3. Dispatch routed xAction
-	 * 	5. Send response
+	 * 	2. Dispatch routed xAction
+	 * 	3. Send response
 	 */
 	public function run() {
 		// Initialize router
@@ -229,8 +234,8 @@ class Application {
 		$view = new View();
 	
 		$view
-		->setPath('../app/views/' . strtolower($controller . '/' . $action) . '.phtml')
-		->setParam('vars', $vars);
+			->setPath('../app/views/' . strtolower($controller . '/' . $action) . '.phtml')
+			->setParam('vars', $vars);
 	
 		// Create controller
 		$controller = ucfirst($controller) . 'Controller';
