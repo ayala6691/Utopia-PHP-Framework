@@ -35,6 +35,13 @@ class View {
 	protected $params = array();
 
 	/**
+	 * @param string $path
+	 */
+	public function __construct($path = '') {
+		$this->setPath($path);
+	}
+	
+	/**
 	 * @param string $key
 	 * @param mixed $value
 	 * @return View
