@@ -1,4 +1,3 @@
-
 # Utopia Framework VERSION 1.0 RC4
 
 ## About
@@ -8,7 +7,7 @@ Any extra features such as authentication, caching will be available as standalo
 As of version 1.0 RC4 Utopia core consists of only 14 files and less than 1500 lines of code.
 
 ## System Requirements
-Utopia Framework requires PHP 5.4 or later; we recommend using the latest PHP version whenever possible.
+Utopia Framework requires PHP 5.4 or later. We recommend using the latest PHP version whenever possible.
 
 ## Links
 * GIT Repositiory: https://github.com/eldadfux/Utopia-PHP-Framework
