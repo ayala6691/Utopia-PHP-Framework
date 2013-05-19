@@ -121,7 +121,7 @@ class Application {
 		$this->getRouter()->init();
 	
 		// Excute routed xAction
-		$body = $this->dispatcher($this->getRouter()->getController(), $this->getRouter()->getAction(), $this->getRouter()->getVars());
+		$this->dispatcher($this->getRouter()->getController(), $this->getRouter()->getAction(), $this->getRouter()->getVars());
 	
 		// Send Response
 		$this->getResponse()->send($this->getLayout()->render());
